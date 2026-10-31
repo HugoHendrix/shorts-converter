@@ -1,0 +1,411 @@
+:root {
+    --fundo: #0f0f0f;
+    --cartao: #1b1b1b;
+    --cartao-2: #272727;
+    --borda: #3a3a3a;
+    --texto: #ffffff;
+    --suave: #b8b8b8;
+    --vermelho: #e60000;
+    --vermelho-hover: #ff1a1a;
+    --verde: #5ee08a;
+    --erro: #ff8f8f;
+    --azul: #8ab8ff;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    background: var(--fundo);
+    color-scheme: dark;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--texto);
+    background: var(--fundo);
+}
+
+h1,
+h2,
+h3,
+p,
+ul {
+    margin: 0;
+}
+
+a {
+    color: var(--azul);
+}
+
+:focus-visible {
+    outline: 3px solid var(--azul);
+    outline-offset: 2px;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.pular {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 10;
+    padding: 0.6rem 1rem;
+    color: #fff;
+    background: var(--vermelho);
+    border-radius: 8px;
+}
+
+.pular:focus {
+    top: 0.75rem;
+}
+
+/* ---------- Topo ---------- */
+.topo {
+    border-bottom: 1px solid var(--borda);
+}
+
+.topo-interno {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(100% - 2rem, 760px);
+    height: 3.5rem;
+    margin-inline: auto;
+}
+
+.marca {
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--vermelho-hover);
+}
+
+/* ---------- Página ---------- */
+.pagina {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+    width: min(100% - 2rem, 760px);
+    margin: 2rem auto 3rem;
+}
+
+.hero {
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: clamp(2rem, 6vw, 3rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+}
+
+.subtitulo {
+    margin-top: 0.6rem;
+    font-size: 1.1rem;
+    color: var(--suave);
+}
+
+.cartao {
+    padding: 1.4rem;
+    background: var(--cartao);
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+}
+
+.cartao h2 {
+    margin-bottom: 0.7rem;
+    font-size: 1.3rem;
+}
+
+.cartao h3 {
+    margin: 1.2rem 0 0.4rem;
+    font-size: 1.05rem;
+}
+
+.cartao h3:first-of-type {
+    margin-top: 0.4rem;
+}
+
+.cartao p {
+    color: var(--suave);
+}
+
+/* ---------- Formulário ---------- */
+label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+
+textarea,
+input[type="text"],
+input[type="url"] {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    font: inherit;
+    color: var(--texto);
+    background: var(--fundo);
+    border: 2px solid var(--cartao-2);
+    border-radius: 10px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 5.5rem;
+}
+
+textarea:focus,
+input:focus {
+    border-color: var(--azul);
+}
+
+.dica {
+    margin-top: 0.4rem;
+    font-size: 0.88rem;
+}
+
+.opcao {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.9rem 0 0;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.opcao input {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: var(--vermelho);
+}
+
+.acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1rem;
+}
+
+.erro {
+    min-height: 1.4em;
+    margin-top: 0.7rem;
+    color: var(--erro) !important;
+    font-weight: 600;
+}
+
+.status {
+    font-size: 0.9rem;
+    color: var(--verde);
+}
+
+/* ---------- Botões ---------- */
+.botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.65rem 1.3rem;
+    font: inherit;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    background: var(--vermelho);
+    border: 1px solid var(--vermelho);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.botao:hover {
+    background: var(--vermelho-hover);
+}
+
+.botao:active {
+    transform: scale(0.97);
+}
+
+.botao-sec {
+    background: var(--cartao-2);
+    border-color: var(--borda);
+}
+
+.botao-sec:hover {
+    background: #343434;
+}
+
+.botao-pequeno {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.9rem;
+}
+
+/* ---------- Resultado ---------- */
+.resumo {
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.resultados,
+.historico {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.9rem;
+    padding: 0;
+    list-style: none;
+}
+
+.item {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.9rem;
+    background: var(--cartao-2);
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+}
+
+.item img {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: #000;
+    border-radius: 8px;
+}
+
+.item-corpo {
+    min-width: 0;
+}
+
+.etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.etiqueta {
+    padding: 0.05rem 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--azul);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+}
+
+.item label {
+    margin-bottom: 0.25rem;
+    font-size: 0.85rem;
+    color: var(--suave);
+}
+
+.item input[type="text"] {
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 0.88rem;
+    color: var(--verde);
+}
+
+.item .acoes {
+    margin-top: 0.6rem;
+}
+
+.item-erro {
+    padding: 0.8rem 1rem;
+    color: var(--erro);
+    background: var(--cartao-2);
+    border: 1px solid var(--erro);
+    border-radius: 10px;
+    word-break: break-all;
+}
+
+.item-erro p {
+    color: var(--suave);
+    font-size: 0.9rem;
+}
+
+/* ---------- Histórico ---------- */
+.historico li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.8rem;
+    background: var(--cartao-2);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+}
+
+.historico .historico-link {
+    flex: 1 1 200px;
+    min-width: 0;
+    overflow: hidden;
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 0.85rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--texto);
+}
+
+/* ---------- FAQ ---------- */
+details {
+    padding: 0.7rem 1rem;
+    margin-bottom: 0.5rem;
+    background: var(--cartao-2);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+}
+
+summary {
+    font-weight: 600;
+    cursor: pointer;
+}
+
+details p {
+    margin-top: 0.5rem;
+}
+
+.arrastavel {
+    cursor: grab;
+}
+
+/* ---------- Rodapé ---------- */
+.rodape {
+    padding: 1.5rem 1rem 3rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--suave);
+    border-top: 1px solid var(--borda);
+}
+
+.rodape-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-top: 0.7rem;
+}
+
+@media (max-width: 560px) {
+    .cartao {
+        padding: 1rem;
+    }
+
+    .item {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .botao {
+        transition: none;
+    }
+}

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hugohendrix.github.io/shorts-converter/sitemap.xml

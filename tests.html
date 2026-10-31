@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Testes do conversor</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 860px; margin: 2rem auto; padding: 0 1rem; background: #0f0f0f; color: #fff; }
+        h1 { font-size: 1.4rem; }
+        #resumo { padding: 0.8rem 1rem; border-radius: 8px; font-weight: 700; }
+        #resumo.ok { background: #14532d; }
+        #resumo.falha { background: #7f1d1d; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+        td, th { padding: 0.45rem 0.6rem; text-align: left; border-bottom: 1px solid #333; vertical-align: top; }
+        .passou { color: #4ade80; }
+        .falhou { color: #f87171; font-weight: 700; }
+        code { word-break: break-all; }
+        a { color: #8ab8ff; }
+    </style>
+    <script src="js/converter.js"></script>
+</head>
+
+<body>
+    <h1>Testes do conversor de links</h1>
+    <p><a href="./">Voltar ao conversor</a></p>
+    <p id="resumo">Executando...</p>
+    <table>
+        <thead>
+            <tr><th>Caso</th><th>Resultado</th></tr>
+        </thead>
+        <tbody id="corpo"></tbody>
+    </table>
+
+    <script>
+        var ID = 'dQw4w9WgXcQ';
+        var casos = [];
+
+        function caso(nome, obtido, esperado) {
+            casos.push({ nome: nome, obtido: JSON.stringify(obtido), esperado: JSON.stringify(esperado) });
+        }
+
+        function ok(entrada) { var r = Conversor.analisar(entrada); return r.ok ? r.id : r.erro; }
+
+        // formatos aceitos
+        caso('Short padrão', ok('https://www.youtube.com/shorts/' + ID), ID);
+        caso('Short com barra no final', ok('https://www.youtube.com/shorts/' + ID + '/'), ID);
+        caso('Short com parâmetro feature=share', ok('https://youtube.com/shorts/' + ID + '?feature=share'), ID);
+        caso('Short pelo celular (m.youtube.com)', ok('https://m.youtube.com/shorts/' + ID), ID);
+        caso('Short sem https', ok('youtube.com/shorts/' + ID), ID);
+        caso('Short com www e sem https', ok('www.youtube.com/shorts/' + ID), ID);
+        caso('Link curto youtu.be', ok('https://youtu.be/' + ID), ID);
+        caso('Link curto com tempo', ok('https://youtu.be/' + ID + '?t=30'), ID);
+        caso('Vídeo comum (watch)', ok('https://www.youtube.com/watch?v=' + ID), ID);
+        caso('Vídeo dentro de playlist', ok('https://www.youtube.com/watch?v=' + ID + '&list=PLabc123&index=2'), ID);
+        caso('Embed', ok('https://www.youtube.com/embed/' + ID), ID);
+        caso('Transmissão ao vivo (live)', ok('https://www.youtube.com/live/' + ID), ID);
+        caso('Espaços em volta', ok('   https://www.youtube.com/shorts/' + ID + '   '), ID);
+
+        // erros
+        caso('Entrada vazia', ok(''), 'vazio');
+        caso('Só espaços', ok('    '), 'vazio');
+        caso('Outro site', ok('https://vimeo.com/123456789'), 'dominio');
+        caso('Domínio parecido (youtube.com.falso.com)', ok('https://youtube.com.falso.com/shorts/' + ID), 'dominio');
+        caso('Canal, sem vídeo', ok('https://www.youtube.com/channel/UC1234567890'), 'sem-id');
+        caso('Página inicial do YouTube', ok('https://www.youtube.com/'), 'sem-id');
+        caso('Playlist sem vídeo', ok('https://www.youtube.com/playlist?list=PLabc123'), 'sem-id');
+        caso('ID curto demais', ok('https://www.youtube.com/shorts/abc123'), 'sem-id');
+        caso('ID com caractere inválido', ok('https://www.youtube.com/shorts/dQw4w9WgXc!'), 'sem-id');
+        caso('Texto que não é link', ok('isto não é um link'), 'formato');
+
+        // tempo
+        caso('Tempo "90"', Conversor.lerTempo('90'), 90);
+        caso('Tempo "90s"', Conversor.lerTempo('90s'), 90);
+        caso('Tempo "1m30s"', Conversor.lerTempo('1m30s'), 90);
+        caso('Tempo "1h2m3s"', Conversor.lerTempo('1h2m3s'), 3723);
+        caso('Tempo inválido', Conversor.lerTempo('abc'), 0);
+        caso('Tempo vazio', Conversor.lerTempo(''), 0);
+        caso('Tempo lido do link (?t=1m30s)', Conversor.analisar('https://www.youtube.com/watch?v=' + ID + '&t=1m30s').tempo, 90);
+        caso('Tempo lido do parâmetro start', Conversor.analisar('https://www.youtube.com/embed/' + ID + '?start=45').tempo, 45);
+
+        // links finais
+        var r30 = { id: ID, tempo: 30 };
+        caso('Link padrão', Conversor.montar({ id: ID, tempo: 0 }).padrao, 'https://www.youtube.com/watch?v=' + ID);
+        caso('Link curto', Conversor.montar({ id: ID, tempo: 0 }).curto, 'https://youtu.be/' + ID);
+        caso('Link padrão mantendo o tempo', Conversor.montar(r30).padrao, 'https://www.youtube.com/watch?v=' + ID + '&t=30s');
+        caso('Link curto mantendo o tempo', Conversor.montar(r30).curto, 'https://youtu.be/' + ID + '?t=30');
+        caso('Link sem o tempo quando a opção está desligada', Conversor.montar(r30, { manterTempo: false }).padrao, 'https://www.youtube.com/watch?v=' + ID);
+        caso('Miniatura', Conversor.miniatura(ID), 'https://i.ytimg.com/vi/' + ID + '/hqdefault.jpg');
+
+        // vários links e texto livre
+        var texto = 'Olha esse vídeo: https://www.youtube.com/shorts/' + ID + ', e este também (https://youtu.be/abcdefghijk).';
+        caso('Extrai links de um texto, sem pontuação no fim', Conversor.extrairLinks(texto),
+            ['https://www.youtube.com/shorts/' + ID, 'https://youtu.be/abcdefghijk']);
+        caso('Converte vários links', Conversor.converterTexto(texto).map(function (i) { return i.id; }), [ID, 'abcdefghijk']);
+        caso('Remove vídeo repetido', Conversor.converterTexto(
+            'https://www.youtube.com/shorts/' + ID + '\nhttps://youtu.be/' + ID).length, 1);
+        caso('Mistura links certos e errados', Conversor.converterTexto(
+            'https://www.youtube.com/shorts/' + ID + ' https://vimeo.com/1').map(function (i) { return i.ok; }), [true, false]);
+        caso('Texto vazio devolve lista vazia', Conversor.converterTexto('   ').length, 0);
+
+        var falhas = 0;
+        var corpo = document.getElementById('corpo');
+        casos.forEach(function (c) {
+            var passou = c.obtido === c.esperado;
+            if (!passou) falhas++;
+            var linha = document.createElement('tr');
+            var nome = document.createElement('td');
+            nome.textContent = c.nome;
+            var res = document.createElement('td');
+            res.className = passou ? 'passou' : 'falhou';
+            if (passou) {
+                res.textContent = 'passou';
+            } else {
+                res.innerHTML = 'falhou<br>esperado: <code></code><br>obtido: <code></code>';
+                res.querySelectorAll('code')[0].textContent = c.esperado;
+                res.querySelectorAll('code')[1].textContent = c.obtido;
+            }
+            linha.append(nome, res);
+            corpo.appendChild(linha);
+        });
+        var resumo = document.getElementById('resumo');
+        resumo.textContent = falhas === 0
+            ? 'Todos os ' + casos.length + ' testes passaram.'
+            : falhas + ' de ' + casos.length + ' testes falharam.';
+        resumo.className = falhas === 0 ? 'ok' : 'falha';
+        document.title = (falhas === 0 ? 'OK' : 'FALHA') + ' | Testes do conversor';
+    </script>
+</body>
+
+</html>
